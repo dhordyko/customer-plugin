@@ -30,22 +30,25 @@ Copyright 2005-2015 Automattic, Inc.
 defined( 'ABSPATH' ) or die( 'Hey, what are you doing here? You silly human!' );
 
 class AlecadddPlugin
-{
+{   //in constructor we call custom post type function
 	function __construct() {
 		add_action( 'init', array( $this, 'custom_post_type' ) );
 	}
-
+// in method we register scripts/styles for admin panel and front
 	function register() {
+        //scripts/styles for front
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
+        //scripts/styles for admin panel
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ) );
 	}
-
+//method for plugin activation hook
 	function activate() {
 		// generated a CPT
 		$this->custom_post_type();
 		// flush rewrite rules
 		flush_rewrite_rules();
 	}
-
+//method for plugin deactivation hook
 	function deactivate() {
 		// flush rewrite rules
 		flush_rewrite_rules();
@@ -54,12 +57,15 @@ class AlecadddPlugin
 	function custom_post_type() {
 		register_post_type( 'book', ['public' => true, 'label' => 'Books'] );
 	}
-
+//mathods for front scripts 
 	function enqueue() {
-     
-        
 		wp_enqueue_style( 'mypluginstyle', plugins_url( '/assets/mystyle.css',   __FILE__ ) );
 		wp_enqueue_script( 'mypluginscript', plugins_url( '/assets/myscript.js',   __FILE__) );
+	}
+    //mathods for admin scripts 
+    function enqueue_admin() {
+		wp_enqueue_style( 'admuginstyle', plugins_url( '/assets/admin/admstyles.css',   __FILE__ ) );
+		wp_enqueue_script( 'admscript', plugins_url( '/assets/admin/admscripts.js',   __FILE__) );
 	}
 }
 
@@ -68,7 +74,7 @@ if ( class_exists( 'AlecadddPlugin' ) ) {
 	$alecadddPlugin->register();
 }
 
-// activation
+// activation we call activate function thiin class
 register_activation_hook( __FILE__, array( $alecadddPlugin, 'activate' ) );
 
 // deactivation
